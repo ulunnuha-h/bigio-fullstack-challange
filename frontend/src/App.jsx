@@ -1,34 +1,61 @@
 import { useState } from "react";
 import reactLogo from "./assets/react.svg";
 import viteLogo from "/vite.svg";
-import "./App.css";
+import { Icon } from "@iconify/react";
+import FilterModal from "./components/FilterModal";
 
 function App() {
-  const [count, setCount] = useState(0);
+  const [showFilter, setShowFilter] = useState(false);
+
+  const toggleFilter = () => setShowFilter(!showFilter);
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <main className="card">
+      <header className="flex justify-between mb-8">
+        <h1>List Story</h1>
+        {showFilter && <FilterModal toggleFilter={toggleFilter} />}
+        <section className="flex gap-2">
+          <input
+            type="text"
+            className="input-text"
+            placeholder="Search by writer's name/title story"
+          />
+          <button className="btn-secondary" onClick={toggleFilter}>
+            <Icon icon="material-symbols:filter-alt" />
+          </button>
+          <button className="btn-primary">Add Story</button>
+        </section>
+      </header>
+      <table className="table-auto">
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Writes</th>
+            <th>Category</th>
+            <th>Tags</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>The Sliding Mr. Bones (Next Stop, Pottersville)</td>
+            <td>Malcolm Lockyer</td>
+            <td>1961</td>
+          </tr>
+          <tr>
+            <td>Witchy Woman</td>
+            <td>The Eagles</td>
+            <td>1972</td>
+          </tr>
+          <tr>
+            <td>Shining Star</td>
+            <td>Earth, Wind, and Fire</td>
+            <td>1975</td>
+          </tr>
+        </tbody>
+      </table>
+    </main>
   );
 }
 
