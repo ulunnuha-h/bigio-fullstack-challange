@@ -37,3 +37,7 @@ th {
 .input-text {
   @apply rounded-md p-2 min-w-72;
 }
+
+.tag {
+  @apply rounded-md bg-gray-500 text-gray-50 p-1 h-auto;
+}

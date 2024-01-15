@@ -3,6 +3,7 @@ import reactLogo from "./assets/react.svg";
 import viteLogo from "/vite.svg";
 import { Icon } from "@iconify/react";
 import FilterModal from "./components/FilterModal";
+import { Link } from "react-router-dom";
 
 function App() {
   const [showFilter, setShowFilter] = useState(false);
@@ -23,7 +24,9 @@ function App() {
           <button className="btn-secondary" onClick={toggleFilter}>
             <Icon icon="material-symbols:filter-alt" />
           </button>
-          <button className="btn-primary">Add Story</button>
+          <Link className="btn-primary" to="add">
+            Add Story
+          </Link>
         </section>
       </header>
       <table className="table-auto">
