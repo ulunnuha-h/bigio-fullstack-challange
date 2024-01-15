@@ -3,4 +3,5 @@ frontend/dist
 frontend/.env
 server/node_modules
 server/.env
+server/image
 
