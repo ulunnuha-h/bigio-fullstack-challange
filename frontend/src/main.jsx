@@ -5,6 +5,7 @@ import "./index.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import AddStory from "./pages/addStory.jsx";
 import EditStory from "./pages/EditStory.jsx";
+import DetailStory from "./pages/DetailStory.jsx";
 
 const root = createBrowserRouter([
   {
@@ -18,6 +19,10 @@ const root = createBrowserRouter([
   {
     path: "/edit/:id",
     element: <EditStory />,
+  },
+  {
+    path: "/story/:id",
+    element: <DetailStory />,
   },
 ]);
 
