@@ -5,6 +5,8 @@ import { Icon } from "@iconify/react";
 import FilterModal from "./components/FilterModal";
 import { Link } from "react-router-dom";
 import { getAllStory } from "./services/story";
+import ActionMenu from "./components/actionMenu";
+import toggleActionMenu from "./utils/toggleActionMenu";
 
 function App() {
   const [showFilter, setShowFilter] = useState(false);
@@ -72,7 +74,11 @@ function App() {
                 <td>{val.status ? "Publish" : "Draft"}</td>
                 <td>
                   <button className="text-3xl">
-                    <Icon icon="material-symbols:more-horiz" />
+                    <Icon
+                      icon="material-symbols:more-horiz"
+                      onClick={() => toggleActionMenu(idx)}
+                    />
+                    <ActionMenu id={idx} />
                   </button>
                 </td>
               </tr>

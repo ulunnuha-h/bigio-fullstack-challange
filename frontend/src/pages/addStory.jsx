@@ -1,5 +1,5 @@
 import { useState } from "react";
-import AddChapter from "./addChapter";
+import AddChapter from "./AddChapter";
 import { Link, useNavigate } from "react-router-dom";
 import { addStory } from "../services/story";
 
