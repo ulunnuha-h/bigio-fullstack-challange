@@ -1,5 +1,6 @@
 const mySql = require("../config/database");
 const fs = require("fs");
+const uuid = require("uuid");
 
 const getAllStory = async (req, res) => {
   const query = "SELECT * FROM story";
@@ -40,7 +41,7 @@ const addStory = async (req, res) => {
     }, "")
     .slice(0, -1);
 
-  const data = { ...req.body, image };
+  const data = { ...req.body, image, id: uuid.v4() };
   mySql.query(query, data, (err, rows, field) => {
     if (err) {
       return res

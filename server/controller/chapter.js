@@ -8,7 +8,7 @@ const addChapter = (req, res) => {
     id: uuid.v4(),
     title,
     story,
-    chapter_id: id,
+    story_id: id,
   };
 
   const query = "INSERT INTO chapter SET ?";
@@ -59,8 +59,8 @@ const updateChapter = (req, res) => {
   const { title, story } = req.body;
 
   const data = { title, story };
-  const querySearch = "SELECT * FROM chapter WHERE id = ? AND chapter_id = ?";
-  const queryUpdate = "UPDATE chapter SET ? WHERE id = ? AND chapter_id = ?";
+  const querySearch = "SELECT * FROM chapter WHERE story_id = ? AND id = ?";
+  const queryUpdate = "UPDATE chapter SET ? WHERE story_id = ? AND id = ?";
 
   mySql.query(querySearch, [id, chapterId], (err, rows, field) => {
     if (err) {
@@ -89,8 +89,8 @@ const updateChapter = (req, res) => {
 const deleteChapter = (req, res) => {
   const { id, chapterId } = req.params;
 
-  const querySearch = "SELECT * FROM chapter WHERE id = ? AND chapter_id = ?";
-  const queryDelete = "DELETE FROM chapter WHERE id = ? AND chapter_id = ?";
+  const querySearch = "SELECT * FROM chapter WHERE story_id = ? AND id = ?";
+  const queryDelete = "DELETE FROM chapter WHERE story_id = ? AND id = ?";
 
   mySql.query(querySearch, [id, chapterId], (err, data, field) => {
     if (err) {
