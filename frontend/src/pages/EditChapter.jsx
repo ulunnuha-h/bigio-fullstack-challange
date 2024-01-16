@@ -18,9 +18,9 @@ const EditChapter = ({ editChapter, toggleEditChapter, idx, data }) => {
   };
 
   return (
-    <div className="fixed z-10 top-0 left-0 h-screen w-screen flex justify-center items-center bg-gray-900">
+    <div className="fixed z-50 top-0 left-0 h-screen w-screen flex justify-center items-center bg-gray-900">
       <form className="card" onSubmit={submitHandler}>
-        <h1 className="mb-8">Add Chapter</h1>
+        <h1 className="mb-8">Edit Chapter</h1>
         <section className="mb-4">
           <label htmlFor="title" className="block">
             Title

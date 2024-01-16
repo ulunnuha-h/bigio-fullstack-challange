@@ -8,10 +8,15 @@ import EditChapter from "./EditChapter";
 import ActionMenu from "../components/actionMenu";
 import toggleActionMenu from "../utils/toggleActionMenu";
 import { addChapterToStory } from "../services/chapter";
+import DeleteModal from "../components/deleteModal";
 
 const AddStory = () => {
   const [showChapter, setShowChapter] = useState(false);
   const [showEditChapter, setShowEditChapter] = useState(false);
+  const [deleteData, setDeleteData] = useState({
+    show: false,
+    action: null,
+  });
   const nav = useNavigate();
   const [storyData, setStoryData] = useState({
     title: "",
@@ -41,6 +46,10 @@ const AddStory = () => {
     setStoryData(temp);
   };
 
+  const toggleDelete = () => {
+    setDeleteData({ ...deleteData, show: !deleteData.show });
+  };
+
   const toggleAddChapter = (e) => {
     e.preventDefault();
     setShowChapter(!showChapter);
@@ -67,6 +76,17 @@ const AddStory = () => {
   const deleteChapter = (idx) => {
     const temp = chapterData.filter((_, curIdx) => curIdx != idx);
     setChapterData(temp);
+  };
+
+  const deleteHandler = (idx) => {
+    const deleteAction = () => {
+      deleteChapter(idx);
+    };
+
+    const temp = deleteData;
+    temp.action = deleteAction;
+    setDeleteData(temp);
+    toggleDelete();
   };
 
   const editHandler = (e, idx) => {
@@ -121,6 +141,9 @@ const AddStory = () => {
           idx={editData.idx}
           data={editData.data}
         />
+      )}
+      {deleteData.show && (
+        <DeleteModal cancel={toggleDelete} action={deleteData.action} />
       )}
       <form className="card flex flex-col gap-2" onSubmit={submitHandler}>
         <h1 className="mb-8">Add Story</h1>
@@ -270,7 +293,7 @@ const AddStory = () => {
                     id={idx}
                     name={["Delete", "Edit"]}
                     action={[
-                      () => deleteChapter(idx),
+                      () => deleteHandler(idx),
                       (e) => editHandler(e, idx),
                     ]}
                   />

@@ -8,6 +8,7 @@ import { deleteStory, getAllStory } from "./services/story";
 import ActionMenu from "./components/actionMenu";
 import toggleActionMenu from "./utils/toggleActionMenu";
 import DeleteModal from "./components/deleteModal";
+import { deleteChapter, getAllChapter } from "./services/chapter";
 
 function App() {
   const [showFilter, setShowFilter] = useState(false);
@@ -35,11 +36,21 @@ function App() {
 
   const deleteHandler = (id) => {
     const deleteAction = () => {
-      deleteStory(id)
-        .then(() => {
-          location.reload();
+      getAllChapter(id)
+        .then((res) => {
+          const { data } = res.data;
+          data.map((val) => {
+            deleteChapter(id, val.id).catch((err) => console.log(err));
+          });
         })
-        .catch((err) => console.log(err));
+        .catch((err) => console.log(err))
+        .finally(() => {
+          deleteStory(id)
+            .then(() => {
+              location.reload();
+            })
+            .catch((err) => console.log(err));
+        });
     };
 
     const temp = deleteData;

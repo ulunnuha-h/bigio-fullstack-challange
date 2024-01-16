@@ -1,7 +1,7 @@
 const DeleteModal = ({ action, cancel }) => {
   console.log(action, cancel);
   return (
-    <main className="fixed top-0 left-0 h-screen w-screen bg-gray-600 bg-opacity-75 backdrop-blur-sm flex justify-center items-center">
+    <main className="fixed z-50 top-0 left-0 h-screen w-screen bg-gray-600 bg-opacity-75 backdrop-blur-sm flex justify-center items-center">
       <div className="card">
         <h1 className="mb-4">Warning!</h1>
         <hr />
@@ -10,7 +10,13 @@ const DeleteModal = ({ action, cancel }) => {
           <button className="btn-secondary" onClick={cancel}>
             No
           </button>
-          <button className="btn-primary" onClick={action}>
+          <button
+            className="btn-primary"
+            onClick={() => {
+              action();
+              cancel();
+            }}
+          >
             Yes
           </button>
         </footer>
