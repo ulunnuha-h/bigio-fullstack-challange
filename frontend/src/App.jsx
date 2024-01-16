@@ -1,14 +1,26 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import reactLogo from "./assets/react.svg";
 import viteLogo from "/vite.svg";
 import { Icon } from "@iconify/react";
 import FilterModal from "./components/FilterModal";
 import { Link } from "react-router-dom";
+import { getAllStory } from "./services/story";
 
 function App() {
   const [showFilter, setShowFilter] = useState(false);
+  const [story, setStory] = useState([]);
 
   const toggleFilter = () => setShowFilter(!showFilter);
+
+  useEffect(() => {
+    getAllStory()
+      .then((res) => {
+        setStory(res.data.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
 
   return (
     <main className="card">
@@ -41,21 +53,31 @@ function App() {
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>The Sliding Mr. Bones (Next Stop, Pottersville)</td>
-            <td>Malcolm Lockyer</td>
-            <td>1961</td>
-          </tr>
-          <tr>
-            <td>Witchy Woman</td>
-            <td>The Eagles</td>
-            <td>1972</td>
-          </tr>
-          <tr>
-            <td>Shining Star</td>
-            <td>Earth, Wind, and Fire</td>
-            <td>1975</td>
-          </tr>
+          {story.map((val, idx) => {
+            const tags = val.tag.split(" ");
+            return (
+              <tr key={idx}>
+                <td>{val.title}</td>
+                <td>{val.writer}</td>
+                <td>
+                  {val.category.charAt(0).toUpperCase() + val.category.slice(1)}
+                </td>
+                <td>
+                  {tags.map((tag, idx) => (
+                    <span key={idx} className="tag me-1">
+                      {tag}
+                    </span>
+                  ))}
+                </td>
+                <td>{val.status ? "Publish" : "Draft"}</td>
+                <td>
+                  <button className="text-3xl">
+                    <Icon icon="material-symbols:more-horiz" />
+                  </button>
+                </td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
     </main>

@@ -1,17 +1,50 @@
 import { useState } from "react";
 import AddChapter from "./addChapter";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { addStory } from "../services/story";
 
 const AddStory = () => {
   const [showChapter, setShowChapter] = useState(false);
+  const nav = useNavigate();
+  const [storyData, setStoryData] = useState({
+    title: "",
+    writer: "",
+    synopsis: "",
+    category: "",
+    status: "",
+    tag: "",
+    image: null,
+  });
+
+  const storyDataHandler = (e) => {
+    e.preventDefault();
+    const name = e.target.name;
+    let temp = storyData;
+    if (name == "image") {
+      temp[name] = e.target.files[0];
+    } else {
+      temp[name] = e.target.value;
+    }
+
+    setStoryData(temp);
+  };
 
   const toggleAddChapter = (e) => {
     e.preventDefault();
     setShowChapter(!showChapter);
   };
+
   const addChapter = (title, story) => {};
 
+  const submitHandler = (e) => {
+    e.preventDefault();
+    addStory(storyData)
+      .then((res) => nav(-1))
+      .catch((err) => console.log(err));
+  };
+
   const inputTags = (e) => {
+    storyDataHandler(e);
     const text = e.target.value;
     const tags = text.split(" ");
     const inputTags = document.getElementById("input-tags");
@@ -26,7 +59,6 @@ const AddStory = () => {
         inputTags.appendChild(tag);
       }
     });
-    console.log(tags);
   };
 
   return (
@@ -37,7 +69,7 @@ const AddStory = () => {
           toggleAddChapter={toggleAddChapter}
         />
       )}
-      <form className="card flex flex-col gap-2">
+      <form className="card flex flex-col gap-2" onSubmit={submitHandler}>
         <h1 className="mb-8">Add Story</h1>
         <div className="flex gap-2">
           <div>
@@ -50,6 +82,8 @@ const AddStory = () => {
               id="title"
               placeholder="Title"
               className="input-text"
+              onChange={storyDataHandler}
+              required
             />
           </div>
           <div>
@@ -62,6 +96,8 @@ const AddStory = () => {
               id="writer"
               placeholder="Writer Name"
               className="input-text"
+              onChange={storyDataHandler}
+              required
             />
           </div>
         </div>
@@ -74,6 +110,8 @@ const AddStory = () => {
             id="synopsis"
             placeholder="Synopsis"
             className="input-text w-full"
+            onChange={storyDataHandler}
+            required
           />
         </div>
         <div className="flex gap-2">
@@ -86,6 +124,8 @@ const AddStory = () => {
               id="category"
               className="w-full p-2 rounded-md"
               defaultValue={""}
+              onChange={storyDataHandler}
+              required
             >
               <option value="financial">Financial</option>
               <option value="technology">Technology</option>
@@ -96,14 +136,14 @@ const AddStory = () => {
             </select>
           </div>
           <div>
-            <label htmlFor="tags" className="block">
+            <label htmlFor="tag" className="block">
               Tags/Keyword Story
             </label>
             <section className="relative overflow-auto">
               <input
                 type="text"
-                name="tags"
-                id="tags"
+                name="tag"
+                id="tag"
                 className="input-text w-full text-white"
                 onChange={inputTags}
               ></input>
@@ -124,6 +164,8 @@ const AddStory = () => {
               name="image"
               id="image"
               className="p-1 bg-gray-50 rounded-md "
+              onChange={storyDataHandler}
+              required
             />
           </div>
           <div className="w-full">
@@ -135,9 +177,11 @@ const AddStory = () => {
               id="status"
               className="w-full p-2 rounded-md"
               defaultValue={""}
+              onChange={storyDataHandler}
+              required
             >
-              <option value="publish">Publish</option>
-              <option value="draft">Draft</option>
+              <option value="1">Publish</option>
+              <option value="0">Draft</option>
               <option value="" className="hidden">
                 Status
               </option>
