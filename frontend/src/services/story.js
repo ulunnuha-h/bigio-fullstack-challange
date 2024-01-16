@@ -42,8 +42,14 @@ const deleteStory = async (id) => {
 };
 
 const updateStory = async (id, data) => {
+  // if (data.image == null) {
+  //   data.image = new FileList();
+  // }
+
+  const formData = jsonToFormData(data);
+
   try {
-    const res = await axios.post(`${URL}/story/${id}`, data);
+    const res = await axios.put(`${URL}/story/${id}`, formData);
     return res;
   } catch (err) {
     return err;

@@ -3,8 +3,8 @@ import ReactDOM from "react-dom/client";
 import App from "./App.jsx";
 import "./index.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import AddChapter from "./pages/AddChapter.jsx";
 import AddStory from "./pages/addStory.jsx";
+import EditStory from "./pages/EditStory.jsx";
 
 const root = createBrowserRouter([
   {
@@ -14,6 +14,10 @@ const root = createBrowserRouter([
   {
     path: "/add",
     element: <AddStory />,
+  },
+  {
+    path: "/edit/:id",
+    element: <EditStory />,
   },
 ]);
 

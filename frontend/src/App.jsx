@@ -3,7 +3,7 @@ import reactLogo from "./assets/react.svg";
 import viteLogo from "/vite.svg";
 import { Icon } from "@iconify/react";
 import FilterModal from "./components/FilterModal";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { deleteStory, getAllStory } from "./services/story";
 import ActionMenu from "./components/actionMenu";
 import toggleActionMenu from "./utils/toggleActionMenu";
@@ -11,6 +11,7 @@ import DeleteModal from "./components/deleteModal";
 import { deleteChapter, getAllChapter } from "./services/chapter";
 
 function App() {
+  const nav = useNavigate();
   const [showFilter, setShowFilter] = useState(false);
   const [story, setStory] = useState([]);
   const [deleteData, setDeleteData] = useState({
@@ -21,7 +22,7 @@ function App() {
   useEffect(() => {
     getAllStory()
       .then((res) => {
-        setStory(res.data.data);
+        setStory(res.data.data || []);
       })
       .catch((err) => {
         console.log(err);
@@ -32,6 +33,10 @@ function App() {
 
   const toggleDelete = () => {
     setDeleteData({ ...deleteData, show: !deleteData.show });
+  };
+
+  const editHandler = (id) => {
+    nav(`/edit/${id}`);
   };
 
   const deleteHandler = (id) => {
@@ -60,11 +65,11 @@ function App() {
   };
 
   return (
-    <main className="card">
+    <main className="card w-full">
       {deleteData.show && (
         <DeleteModal cancel={toggleDelete} action={deleteData.action} />
       )}
-      <header className="flex justify-between mb-8">
+      <header className="flex justify-between mb-8 gap-8">
         <h1>List Story</h1>
         {showFilter && <FilterModal toggleFilter={toggleFilter} />}
         <section className="flex gap-2">
@@ -81,7 +86,7 @@ function App() {
           </Link>
         </section>
       </header>
-      <table className="table-auto">
+      <table className="table-auto w-full">
         <thead>
           <tr>
             <th>Title</th>
@@ -115,7 +120,8 @@ function App() {
                     <Icon
                       icon="material-symbols:more-horiz"
                       // onClick={() => toggleActionMenu(idx)}
-                      onClick={() => deleteHandler(val.id)}
+                      // onClick={() => deleteHandler(val.id)}
+                      onClick={() => editHandler(val.id)}
                     />
                     <ActionMenu id={idx} />
                   </button>

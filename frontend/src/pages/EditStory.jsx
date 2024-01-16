@@ -1,16 +1,21 @@
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { addStory } from "../services/story";
+import { useEffect, useState } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { addStory, getStoryById, updateStory } from "../services/story";
 import AddChapter from "./addChapter";
 import { Icon } from "@iconify/react";
 import formateDate from "../utils/formatDate";
 import EditChapter from "./EditChapter";
 import ActionMenu from "../components/actionMenu";
 import toggleActionMenu from "../utils/toggleActionMenu";
-import { addChapterToStory } from "../services/chapter";
+import {
+  addChapterToStory,
+  getAllChapter,
+  deleteChapter as deleteChapterFromStory,
+} from "../services/chapter";
 import DeleteModal from "../components/deleteModal";
 
-const AddStory = () => {
+const EditStory = () => {
+  const { id } = useParams();
   const [showChapter, setShowChapter] = useState(false);
   const [showEditChapter, setShowEditChapter] = useState(false);
   const [deleteData, setDeleteData] = useState({
@@ -43,6 +48,7 @@ const AddStory = () => {
       temp[name] = e.target.value;
     }
 
+    console.log(temp);
     setStoryData(temp);
   };
 
@@ -61,12 +67,15 @@ const AddStory = () => {
   };
 
   const addChapter = (title, story) => {
-    setChapterData([...chapterData, { title, story, updated_at: Date.now() }]);
+    setChapterData([
+      ...chapterData,
+      { title, story, updated_at: formateDate(Date.now()) },
+    ]);
   };
 
   const editChapter = (title, story, idx) => {
     let temp = chapterData;
-    temp[idx] = { title, story, updated_at: Date.now() };
+    temp[idx] = { title, story, updated_at: formateDate(Date.now()) };
     setChapterData(temp);
   };
 
@@ -93,16 +102,23 @@ const AddStory = () => {
 
   const submitHandler = (e) => {
     e.preventDefault();
-    addStory(storyData)
+    getAllChapter(id)
       .then((res) => {
-        chapterData.forEach((val) => {
-          addChapterToStory(res.data.data.id, val).catch((err) =>
-            console.log(err)
-          );
+        const { data } = res.data;
+        data.map((val) => {
+          deleteChapterFromStory(id, val.id).catch((err) => console.log(err));
         });
       })
-      .catch((err) => console.log(err))
-      .finally(() => nav("/"));
+      .finally(() => {
+        updateStory(id, storyData)
+          .then(() => {
+            chapterData.forEach((val) => {
+              addChapterToStory(id, val).catch((err) => console.log(err));
+            });
+          })
+          .catch((err) => console.log(err))
+          .finally(() => nav("/"));
+      });
   };
 
   const inputTags = (e) => {
@@ -122,6 +138,30 @@ const AddStory = () => {
       }
     });
   };
+
+  useEffect(() => {
+    getStoryById(id)
+      .then((res) => {
+        const { data } = res.data;
+        setStoryData({ ...data[0], image: null });
+        const tags = data[0].tag.split(" ");
+        const inputTags = document.getElementById("input-tags");
+        tags.forEach((val) => {
+          if (val != "") {
+            const tag = document.createElement("span");
+            tag.className = "tag";
+            tag.innerText = val;
+            inputTags.appendChild(tag);
+          }
+        });
+
+        getAllChapter(id).then((res) => {
+          const { data } = res.data;
+          setChapterData(data);
+        });
+      })
+      .catch((err) => console.log(err));
+  }, []);
 
   return (
     <>
@@ -143,7 +183,7 @@ const AddStory = () => {
         <DeleteModal cancel={toggleDelete} action={deleteData.action} />
       )}
       <form className="card flex flex-col gap-2" onSubmit={submitHandler}>
-        <h1 className="mb-8">Add Story</h1>
+        <h1 className="mb-8">Edit Story</h1>
         <div className="flex gap-2">
           <div>
             <label htmlFor="title" className="block">
@@ -156,6 +196,7 @@ const AddStory = () => {
               placeholder="Title"
               className="input-text"
               onChange={storyDataHandler}
+              defaultValue={storyData.title}
               required
             />
           </div>
@@ -170,6 +211,7 @@ const AddStory = () => {
               placeholder="Writer Name"
               className="input-text"
               onChange={storyDataHandler}
+              defaultValue={storyData.writer}
               required
             />
           </div>
@@ -185,6 +227,7 @@ const AddStory = () => {
             className="input-text w-full"
             onChange={storyDataHandler}
             required
+            defaultValue={storyData.synopsis}
           />
         </div>
         <div className="flex gap-2">
@@ -196,7 +239,6 @@ const AddStory = () => {
               name="category"
               id="category"
               className="w-full p-2 rounded-md"
-              defaultValue={""}
               onChange={storyDataHandler}
               required
             >
@@ -219,6 +261,7 @@ const AddStory = () => {
                 id="tag"
                 className="input-text w-full text-white"
                 onChange={inputTags}
+                defaultValue={storyData.tag}
               ></input>
               <div
                 className="absolute flex gap-1 left-1 z-10 top-0 h-full py-1"
@@ -238,7 +281,6 @@ const AddStory = () => {
               id="image"
               className="p-1 bg-gray-50 rounded-md "
               onChange={storyDataHandler}
-              required
             />
           </div>
           <div className="w-full">
@@ -249,7 +291,6 @@ const AddStory = () => {
               name="status"
               id="status"
               className="w-full p-2 rounded-md"
-              defaultValue={""}
               onChange={storyDataHandler}
               required
             >
@@ -310,4 +351,4 @@ const AddStory = () => {
   );
 };
 
-export default AddStory;
+export default EditStory;
