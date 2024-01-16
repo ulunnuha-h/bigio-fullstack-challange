@@ -10,6 +10,7 @@ app.use(express.json());
 app.use(cors());
 app.use("/api/image", express.static("./image"));
 app.use("/api/story", require("./route/story"));
+app.use("/api/chapter", require("./route/chapter"));
 
 app.get("/api", (req, res) => {
   res.status(200).json({
