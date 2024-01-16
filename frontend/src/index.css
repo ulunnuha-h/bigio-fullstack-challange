@@ -27,7 +27,7 @@ th {
 }
 
 .btn-primary {
-  @apply bg-gray-900 text-gray-50 p-2 rounded-md hover:bg-gray-800 active:bg-gray-950;
+  @apply bg-gray-900 text-gray-50 p-2 rounded-md hover:bg-gray-800 active:bg-gray-950 disabled:bg-gray-200;
 }
 
 .btn-secondary {

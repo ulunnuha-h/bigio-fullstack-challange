@@ -1,10 +1,17 @@
 import { useState } from "react";
-import AddChapter from "./AddChapter";
 import { Link, useNavigate } from "react-router-dom";
 import { addStory } from "../services/story";
+import AddChapter from "./addChapter";
+import { Icon } from "@iconify/react";
+import formateDate from "../utils/formatDate";
+import EditChapter from "./EditChapter";
+import ActionMenu from "../components/actionMenu";
+import toggleActionMenu from "../utils/toggleActionMenu";
+import { addChapterToStory } from "../services/chapter";
 
 const AddStory = () => {
   const [showChapter, setShowChapter] = useState(false);
+  const [showEditChapter, setShowEditChapter] = useState(false);
   const nav = useNavigate();
   const [storyData, setStoryData] = useState({
     title: "",
@@ -14,6 +21,11 @@ const AddStory = () => {
     status: "",
     tag: "",
     image: null,
+  });
+  const [chapterData, setChapterData] = useState([]);
+  const [editData, setEditData] = useState({
+    idx: 0,
+    data: {},
   });
 
   const storyDataHandler = (e) => {
@@ -34,13 +46,46 @@ const AddStory = () => {
     setShowChapter(!showChapter);
   };
 
-  const addChapter = (title, story) => {};
+  const toggleEditChapter = (e) => {
+    e.preventDefault();
+    setShowEditChapter(!showEditChapter);
+  };
+
+  const addChapter = (title, story) => {
+    setChapterData([
+      ...chapterData,
+      { title, story, updated_at: formateDate(Date.now()) },
+    ]);
+  };
+
+  const editChapter = (title, story, idx) => {
+    let temp = chapterData;
+    temp[idx] = { title, story, updated_at: formateDate(Date.now()) };
+    setChapterData(temp);
+  };
+
+  const deleteChapter = (idx) => {
+    const temp = chapterData.filter((_, curIdx) => curIdx != idx);
+    setChapterData(temp);
+  };
+
+  const editHandler = (e, idx) => {
+    setEditData({ idx, data: chapterData[idx] });
+    toggleEditChapter(e);
+  };
 
   const submitHandler = (e) => {
     e.preventDefault();
     addStory(storyData)
-      .then((res) => nav(-1))
-      .catch((err) => console.log(err));
+      .then((res) => {
+        chapterData.forEach((val) => {
+          addChapterToStory(res.data.data.id, val).catch((err) =>
+            console.log(err)
+          );
+        });
+      })
+      .catch((err) => console.log(err))
+      .finally(() => nav("/"));
   };
 
   const inputTags = (e) => {
@@ -67,6 +112,14 @@ const AddStory = () => {
         <AddChapter
           addChapter={addChapter}
           toggleAddChapter={toggleAddChapter}
+        />
+      )}
+      {showEditChapter && (
+        <EditChapter
+          editChapter={editChapter}
+          toggleEditChapter={toggleEditChapter}
+          idx={editData.idx}
+          data={editData.data}
         />
       )}
       <form className="card flex flex-col gap-2" onSubmit={submitHandler}>
@@ -202,6 +255,29 @@ const AddStory = () => {
               <th>Action</th>
             </tr>
           </thead>
+          <tbody>
+            {chapterData.map((val, idx) => (
+              <tr key={idx}>
+                <th>{val.title}</th>
+                <th>{val.updated_at}</th>
+                <th>
+                  <Icon
+                    icon="material-symbols:more-horiz"
+                    onClick={() => toggleActionMenu(idx)}
+                    className="cursor-pointer"
+                  />
+                  <ActionMenu
+                    id={idx}
+                    name={["Delete", "Edit"]}
+                    action={[
+                      () => deleteChapter(idx),
+                      (e) => editHandler(e, idx),
+                    ]}
+                  />
+                </th>
+              </tr>
+            ))}
+          </tbody>
         </table>
         <footer className="flex justify-end gap-2">
           <Link className="btn-secondary" to={"/"}>

@@ -1,15 +1,20 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 
-const AddChapter = ({ addChapter, toggleAddChapter }) => {
+const EditChapter = ({ editChapter, toggleEditChapter, idx, data }) => {
   const [story, setStory] = useState("");
   const [title, setTitle] = useState("");
 
+  useEffect(() => {
+    setTitle(data.title);
+    setStory(data.story);
+  }, []);
+
   const submitHandler = (e) => {
     e.preventDefault();
-    addChapter(title, story);
-    toggleAddChapter(e);
+    editChapter(title, story, idx);
+    toggleEditChapter(e);
   };
 
   return (
@@ -42,7 +47,7 @@ const AddChapter = ({ addChapter, toggleAddChapter }) => {
           <button
             className="btn-secondary"
             type="button"
-            onClick={toggleAddChapter}
+            onClick={toggleEditChapter}
           >
             Cancel
           </button>
@@ -55,4 +60,4 @@ const AddChapter = ({ addChapter, toggleAddChapter }) => {
   );
 };
 
-export default AddChapter;
+export default EditChapter;
