@@ -4,15 +4,18 @@ import viteLogo from "/vite.svg";
 import { Icon } from "@iconify/react";
 import FilterModal from "./components/FilterModal";
 import { Link } from "react-router-dom";
-import { getAllStory } from "./services/story";
+import { deleteStory, getAllStory } from "./services/story";
 import ActionMenu from "./components/actionMenu";
 import toggleActionMenu from "./utils/toggleActionMenu";
+import DeleteModal from "./components/deleteModal";
 
 function App() {
   const [showFilter, setShowFilter] = useState(false);
   const [story, setStory] = useState([]);
-
-  const toggleFilter = () => setShowFilter(!showFilter);
+  const [deleteData, setDeleteData] = useState({
+    show: false,
+    action: null,
+  });
 
   useEffect(() => {
     getAllStory()
@@ -24,8 +27,32 @@ function App() {
       });
   }, []);
 
+  const toggleFilter = () => setShowFilter(!showFilter);
+
+  const toggleDelete = () => {
+    setDeleteData({ ...deleteData, show: !deleteData.show });
+  };
+
+  const deleteHandler = (id) => {
+    const deleteAction = () => {
+      deleteStory(id)
+        .then(() => {
+          location.reload();
+        })
+        .catch((err) => console.log(err));
+    };
+
+    const temp = deleteData;
+    temp.action = deleteAction;
+    setDeleteData(temp);
+    toggleDelete();
+  };
+
   return (
     <main className="card">
+      {deleteData.show && (
+        <DeleteModal cancel={toggleDelete} action={deleteData.action} />
+      )}
       <header className="flex justify-between mb-8">
         <h1>List Story</h1>
         {showFilter && <FilterModal toggleFilter={toggleFilter} />}
@@ -76,7 +103,8 @@ function App() {
                   <button className="text-3xl">
                     <Icon
                       icon="material-symbols:more-horiz"
-                      onClick={() => toggleActionMenu(idx)}
+                      // onClick={() => toggleActionMenu(idx)}
+                      onClick={() => deleteHandler(val.id)}
                     />
                     <ActionMenu id={idx} />
                   </button>
