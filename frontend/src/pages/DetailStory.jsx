@@ -28,7 +28,7 @@ const DetailStory = () => {
         />
         <div className="col-span-5">
           <h2>Synopsis</h2>
-          <p>{data.synopsis}</p>
+          <p className="text-justify">{data.synopsis}</p>
         </div>
         <div className="flex flex-col gap-8 col-span-3">
           <section>

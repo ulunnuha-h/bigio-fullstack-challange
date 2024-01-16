@@ -3,7 +3,7 @@ import reactLogo from "./assets/react.svg";
 import viteLogo from "/vite.svg";
 import { Icon } from "@iconify/react";
 import FilterModal from "./components/FilterModal";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { deleteStory, getAllStory } from "./services/story";
 import ActionMenu from "./components/actionMenu";
 import toggleActionMenu from "./utils/toggleActionMenu";
@@ -12,27 +12,45 @@ import { deleteChapter, getAllChapter } from "./services/chapter";
 
 function App() {
   const nav = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [showFilter, setShowFilter] = useState(false);
   const [story, setStory] = useState([]);
   const [deleteData, setDeleteData] = useState({
     show: false,
     action: null,
   });
+  const [key, setKey] = useState("");
 
   useEffect(() => {
-    getAllStory()
+    setKey(searchParams.get("key") || "");
+
+    const params = {
+      key,
+      category: searchParams.get("category") || "",
+      status: searchParams.get("status") || "",
+    };
+
+    getAllStory(params)
       .then((res) => {
         setStory(res.data.data || []);
       })
       .catch((err) => {
         console.log(err);
       });
-  }, []);
+  }, [key]);
 
-  const toggleFilter = () => setShowFilter(!showFilter);
+  const toggleFilter = () => {
+    setShowFilter(!showFilter);
+  };
 
   const toggleDelete = () => {
     setDeleteData({ ...deleteData, show: !deleteData.show });
+  };
+
+  const keyHandler = (e) => {
+    setKey(e.target.value);
+    searchParams.set("key", e.target.value);
+    setSearchParams(searchParams);
   };
 
   const editHandler = (id) => {
@@ -77,6 +95,8 @@ function App() {
             type="text"
             className="input-text"
             placeholder="Search by writer's name/title story"
+            value={key}
+            onChange={keyHandler}
           />
           <button className="btn-secondary" onClick={toggleFilter}>
             <Icon icon="material-symbols:filter-alt" />
@@ -120,8 +140,6 @@ function App() {
                     <Icon
                       icon="material-symbols:more-horiz"
                       onClick={() => toggleActionMenu(idx)}
-                      // onClick={() => deleteHandler(val.id)}
-                      // onClick={() => editHandler(val.id)}
                     />
                     <ActionMenu
                       id={idx}

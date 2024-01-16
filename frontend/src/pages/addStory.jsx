@@ -23,7 +23,7 @@ const AddStory = () => {
     writer: "",
     synopsis: "",
     category: "",
-    status: "",
+    status: "0",
     tag: "",
     image: null,
   });
@@ -95,6 +95,7 @@ const AddStory = () => {
     e.preventDefault();
     addStory(storyData)
       .then((res) => {
+        console.log(res);
         chapterData.forEach((val) => {
           addChapterToStory(res.data.data.id, val).catch((err) =>
             console.log(err)

@@ -14,11 +14,18 @@ const FilterModal = ({ toggleFilter }) => {
     searchParams.delete("status");
     setSearchParams(searchParams);
     toggleFilter();
+    location.reload();
   };
 
   return (
     <div className="fixed h-screen w-screen top-0 left-0 bg-gray-700 flex justify-center items-center bg-opacity-50 backdrop-blur-sm">
       <form className="card min-w-64">
+        <input
+          type="text"
+          value={searchParams.get("key")}
+          className="hidden"
+          name="key"
+        />
         <h1 className="mb-4">Filter</h1>
         <section>
           <label htmlFor="category" className="block">
@@ -48,8 +55,8 @@ const FilterModal = ({ toggleFilter }) => {
             className="w-full"
             defaultValue={searchParams.get("status") || ""}
           >
-            <option value="publish">Publish</option>
-            <option value="draft">Draft</option>
+            <option value="1">Publish</option>
+            <option value="0">Draft</option>
             <option value="" className="hidden">
               Status
             </option>

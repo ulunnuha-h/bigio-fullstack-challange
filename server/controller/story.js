@@ -3,17 +3,28 @@ const fs = require("fs");
 const uuid = require("uuid");
 
 const getAllStory = async (req, res) => {
-  const query = "SELECT * FROM story";
+  const query =
+    "SELECT * FROM story WHERE (title LIKE ? OR writer LIKE ?) AND category LIKE ? AND status LIKE ?";
+  const { key = "", category = "", status = "" } = req.query;
 
-  mySql.query(query, (err, rows) => {
-    if (err) {
-      return res
-        .status(500)
-        .json({ message: "There's some problem", error: err });
+  mySql.query(
+    query,
+    [
+      "%" + key + "%",
+      "%" + key + "%",
+      "%" + category + "%",
+      "%" + status + "%",
+    ],
+    (err, rows) => {
+      if (err) {
+        return res
+          .status(500)
+          .json({ message: "There's some problem", error: err });
+      }
+
+      res.status(200).json({ success: true, data: rows });
     }
-
-    res.status(200).json({ success: true, data: rows });
-  });
+  );
 };
 
 const getStoryById = async (req, res) => {

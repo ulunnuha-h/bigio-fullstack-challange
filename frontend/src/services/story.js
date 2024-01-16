@@ -3,9 +3,11 @@ import jsonToFormData from "../utils/jsonToFormData";
 
 const URL = import.meta.env.VITE_API_URL + "/api";
 
-const getAllStory = async () => {
+const getAllStory = async ({ key = "", category = "", status = "" }) => {
   try {
-    const res = await axios.get(`${URL}/story`);
+    const res = await axios.get(
+      URL + "/story?category=" + category + "&status=" + status + "&key=" + key
+    );
     return res;
   } catch (err) {
     return err;
@@ -42,10 +44,6 @@ const deleteStory = async (id) => {
 };
 
 const updateStory = async (id, data) => {
-  // if (data.image == null) {
-  //   data.image = new FileList();
-  // }
-
   const formData = jsonToFormData(data);
 
   try {
